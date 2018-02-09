@@ -6,6 +6,9 @@
 //  Copyright © 2017年 UEdge. All rights reserved.
 //
 
+#define margin_1 3.0
+#define margin_2 5.0
+#define margin_3 10.0
 #import "EdgeCollectionViewCell.h"
 
 @implementation EdgeCollectionViewCell
@@ -29,19 +32,17 @@
 
     if (Screen_H<600.0) {// 4.0屏幕
         
-         self.topMargin.constant = 0.0;
+
         label.font = [UIFont systemFontOfSize:13.0];
         
     }else{
         
         if (Screen_H<700.0) {// 4.7屏幕
             
-            self.topMargin.constant = 3.0;
             label.font = [UIFont systemFontOfSize:14.0];
       
         }else{// 5.5以上
             
-            self.topMargin.constant = 15.0;
             label.font = [UIFont systemFontOfSize:15.0];
             
         }
@@ -56,17 +57,17 @@
     
     if (Screen_H<600.0) {// 4.0屏幕
         
-        topMargin.constant = 0.0;
+        topMargin.constant = margin_1;
         
     }else{
         
         if (Screen_H<700.0) {// 4.7屏幕
             
-            topMargin.constant = 5.0;
+            topMargin.constant = margin_2;
             
         }else{// 5.5以上
             
-            topMargin.constant = 10.0;
+            topMargin.constant = margin_3;
             
         }
         
@@ -78,6 +79,54 @@
     _messageCountLabel = messageCountLabel;
   
     messageCountLabel.layer.masksToBounds = YES;
-    messageCountLabel.layer.cornerRadius = 8.0;
+    messageCountLabel.layer.cornerRadius = messageCountLabel.frame.size.width/2;
+}
+
+
+-(void)setCountMarginTop:(NSLayoutConstraint *)countMarginTop{
+    
+    _countMarginTop = countMarginTop;
+    
+    if (Screen_H<600.0) {// 4.0屏幕
+        
+         countMarginTop.constant = -margin_1;
+        
+    }else{
+        
+        if (Screen_H<700.0) {// 4.7屏幕
+            
+            countMarginTop.constant = -margin_2;
+            
+        }else{// 5.5以上
+            
+            countMarginTop.constant = -margin_3/2;
+            
+        }
+        
+    }
+}
+
+-(void)setCountMarginTralling:(NSLayoutConstraint *)countMarginTralling{
+   
+    _countMarginTralling = countMarginTralling;
+    
+    
+    if (Screen_H<600.0) {// 4.0屏幕
+        
+        countMarginTralling.constant = margin_1+3;
+        
+    }else{
+        
+        if (Screen_H<700.0) {// 4.7屏幕
+            
+            countMarginTralling.constant = margin_2;
+            
+        }else{// 5.5以上
+            
+            countMarginTralling.constant = margin_3/2;
+            
+        }
+        
+    }
 }
 @end

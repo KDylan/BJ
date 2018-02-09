@@ -22,5 +22,7 @@
 
 /**消息数量label*/
 @property (weak, nonatomic) IBOutlet UILabel *messageCountLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *countMarginTralling;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *countMarginTop;
 
 @end

@@ -94,7 +94,11 @@ static NSArray *tableViewCellTitleInSection;
     
 }
 
+/**
+ 退出操作程序
+ */
 -(void)clickLogoutActionBtn{
+    
     //清除用户数据
     [UserModel cleanUserModel];
    
