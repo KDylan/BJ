@@ -64,6 +64,7 @@
         
         _titleIndexLabel = [[UILabel alloc] init];
         _titleIndexLabel.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.6];
+//        _titleIndexLabel.textAlignment = NSTextAlignmentCenter;
         _titleIndexLabel.font = [UIFont systemFontOfSize:16.0];
         _titleIndexLabel.textColor = [UIColor whiteColor];
     }
@@ -76,7 +77,7 @@
     _flowModel = flowModel;
 
     self.mainImageView.image = [UIImage imageNamed:flowModel.back_up1];
-    self.titleIndexLabel.text = flowModel.nn_news_content;
+    self.titleIndexLabel.text = flowModel.nn_news_title;
 //    self.scroll_Url = flowModel.Scroll_Url;
 }
 @end

@@ -623,7 +623,7 @@ static EdgeHomeViewController *instance = nil;
 #pragma mark  -----------------  NewPagedFlowView Datasource   -----------------
 
 - (NSInteger)numberOfPagesInFlowView:(NewPagedFlowView *)flowView {
-    NSLog(@"self.flowImageMUArr.count; = %lu",(unsigned long)self.flowImageMUArr.count);
+//    NSLog(@"self.flowImageMUArr.count; = %lu",(unsigned long)self.flowImageMUArr.count);
     return self.flowImageMUArr.count;
 }
 
