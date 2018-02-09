@@ -59,9 +59,6 @@ static EdgeHomeViewController *instance = nil;
 /**滚动图片模型*/
 @property(nonatomic,strong)EdgeFlowViewModel *flowViewModel;
 
-/**滚动新闻模型*/
-@property(nonatomic,strong)EdgeScycleNewsModel *ScycleNewsModel;
-
 /** 北江快报 */
 @property (strong, nonatomic) IBOutlet UIView *NewstitleView;
 
@@ -163,14 +160,13 @@ static EdgeHomeViewController *instance = nil;
             NSMutableArray *newsIDMuArr = [NSMutableArray array];
             
             for (EdgeScycleNewsModel *rowsModel in imageModel.rows) {
-                
-                self.ScycleNewsModel = rowsModel;
-                
+             
                 [NewsMUArr addObject:rowsModel.nn_news_title];
                 
                 [newsIDMuArr addObject:[NSString stringWithFormat:@"%ld",(long)rowsModel.ID]];
                 
             }
+            
             self.newsTitleArrID = newsIDMuArr;
             
             self.titleCycleScrollView.titlesGroup = NewsMUArr;
@@ -574,6 +570,7 @@ static EdgeHomeViewController *instance = nil;
         //  设置滚动数量标题
         weakSelf.indexLabel.text = [NSString stringWithFormat:@"%ld/10",(long)index+1];
     };
+    
     
     EdgeCollectionView *funcView = [[EdgeCollectionView alloc]init];
     self.funcView  =funcView;
