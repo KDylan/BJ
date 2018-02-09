@@ -89,7 +89,7 @@
     EdgeLog(@"消息来了4");
     
     EdgeLog(@"didReceiveNotification：%@", response.notification.request.content.userInfo);
-
+    
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
     
     // 清空个推消息角标
@@ -99,12 +99,12 @@
     [GeTuiSdk handleRemoteNotification:response.notification.request.content.userInfo];
     
     NSDictionary *payload = response.notification.request.content.userInfo;
-
+    
     //  解析数据
     [self parsingPayLoadMes:payload[@"payload"]];
-
+    
 #endif
-
+    
     completionHandler();
 }
 
@@ -118,10 +118,10 @@
     
     // 控制台打印接收APNs信息
     EdgeLog(@"\n>>>[Receive RemoteNotification]:%@\n\n", userInfo);
- 
+    
     [self parsingPayLoadMes:userInfo[@"payload"]];
     
-   
+    
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
@@ -171,7 +171,7 @@
                     case RequestToUpload://1：请求上传gps位置
                     {
                         
-                        [[AlertViewHelper getInstance] show:@"上传定位" msg:@""leftTitle:@"取消" leftBlock:^{
+                        [[AlertViewHelper getInstance] show:@"提示" msg:@"上传定位"leftTitle:@"取消" leftBlock:^{
                             
                             EdgeLog(@"取消");
                             
@@ -180,25 +180,25 @@
                             EdgeLog(@"上传定位");
                             
                             [self uploadLocatonPlace];
-                    }];
+                        }];
                         
                     }
                         break;
                     case SchedulingMessages://1：查看通知信息
                     {
-                        [[AlertViewHelper getInstance] show:@"打开通知" msg:@""leftTitle:@"取消" leftBlock:^{
+                        [[AlertViewHelper getInstance] show:@"提示" msg:@"查看通知"leftTitle:@"取消" leftBlock:^{
                             
                             EdgeLog(@"取消");
                             
                         } rigthTitle:@"确定" rightBlock:^{
-                         
+                            
                             NSString *url = mesage.CommandParam.url;
-                           
+                            
                             if (url) {
                                 
                                 [[EdgeHomeViewController getInstance]showGTWebViewController:url];
                             }
-
+                            
                         }];
                     }
                         break;
@@ -257,7 +257,7 @@
 
 /**
  解析PayLoad数据
-
+ 
  @param PayLoad dict
  */
 -(void)parsingPayLoadMes:(NSDictionary *)PayLoad{
@@ -289,22 +289,22 @@
         }
         
     }
-
+    
 }
 
 -(void)uploadLocatonPlace{
     
-//      上传船舶定位
-            if (BBUserDefault.ship) {//  已经绑定船舶
-    
-                EdgeLog(@"开始上传定位");
-                //上传位置信息
-                [[BaiduLocationServiceHelper getSingleton] sendGSPInfo];
-    
-            }else{
-    
-                EdgeLog(@"请先绑定船舶再传数据服务");
-            }
+    //      上传船舶定位
+    if (BBUserDefault.ship) {//  已经绑定船舶
+        
+        EdgeLog(@"开始上传定位");
+        //上传位置信息
+        [[BaiduLocationServiceHelper getSingleton] sendGSPInfo];
+        
+    }else{
+        
+        EdgeLog(@"请先绑定船舶再传数据服务");
+    }
 }
 
 

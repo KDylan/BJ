@@ -71,6 +71,7 @@
     return _titleIndexLabel;
 }
 
+
 // 设置模型数据
 -(void)setFlowModel:(EdgeFlowViewModel *)flowModel{
     
