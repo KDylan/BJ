@@ -222,6 +222,16 @@ static EdgeHomeViewController *instance = nil;
     
 }
 
+/**
+ 刷新下半部分view
+ */
+-(void)reloadFuncView{
+    EdgeLog(@"刷新下面的funcView");
+    //  刷新数据
+    [self.funcView reloadData];
+    //  重新加载数据
+    [self dataInit];
+}
 #pragma mark--------------------  点击方法函数  ----------------------
 
 /**
@@ -256,7 +266,7 @@ static EdgeHomeViewController *instance = nil;
         
         EdgeLog(@"click indec = %d-%@-%@-%@-%d",index,functionMenu.buttonImageName,functionMenu.buttonLabel,functionMenu.url,functionMenu.isLogin);
         
-        if (index==2) {//  调度信息
+        if ([functionMenu.buttonLabel isEqualToString:@"调度信息"]) {//  调度信息
             //  打开环形聊天界面
             [self clickLogin_HX];
             

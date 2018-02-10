@@ -102,16 +102,22 @@ static NSArray *tableViewCellTitleInSection;
     //清除用户数据
     [UserModel cleanUserModel];
    
-    [self dismissViewControllerAnimated:YES completion:nil];
+    //  刷新首页
+    [[EdgeHomeViewController getInstance]reloadFuncView];
+    
     //  清除消息数量
     [[EdgeHomeViewController getInstance] hasNewMessage];
+    
+     [self dismissViewControllerAnimated:YES completion:nil];
+    
+      [GeTuiSdk resetBadge]; //重置角标计数
     
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0]; // APP 清空角标
     
     // 取消绑定别名
     [GeTuiSdk unbindAlias:self.userModel.vf_user_code andSequenceNum:[NSString stringWithFormat:@"%@",@""] andIsSelf:YES];
     
-    [GeTuiSdk resetBadge]; //重置角标计数
+  
 }
 #pragma mark - Table view data source
 

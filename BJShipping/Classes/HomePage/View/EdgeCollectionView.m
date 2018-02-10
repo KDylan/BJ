@@ -34,6 +34,7 @@ NSString * const CollectionViewCell = @"EdgeCollectionViewCell";
 {
     self = [super initWithFrame:frame];
     if (self) {
+        
         [self setupMainView];
     }
     return self;
@@ -66,9 +67,20 @@ NSString * const CollectionViewCell = @"EdgeCollectionViewCell";
 }
 
 -(void)reloadData{
+    //  获取数据源
+    [self dataInit];
     
-    //    [self dataInit];
     [_mainView reloadData];
+}
+
+/**
+ 获取数据源
+ */
+-(void)dataInit{
+    
+    NSLog(@"getUserType = %ld",(long)[UserModel getUserModel].getUserType);
+    
+     self.typeItemArray = [EdgeCollectionModel getHomeCollectionViewMenuArray:[UserModel getUserModel].getUserType];
 }
 
 - (void)layoutSubviews
@@ -141,10 +153,7 @@ NSString * const CollectionViewCell = @"EdgeCollectionViewCell";
     if (!_typeItemArray) {
         
         _typeItemArray = [[NSArray alloc]init];
-        
-        
-        _typeItemArray = [EdgeCollectionModel getHomeCollectionViewMenuArray:[UserModel getUserModel].getUserType];
-        
+      
     }
     return _typeItemArray;
 }

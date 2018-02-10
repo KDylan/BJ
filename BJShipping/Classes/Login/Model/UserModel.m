@@ -73,32 +73,6 @@ static UserModel *instance = nil;
     BBUserDefault.userModelJSON = json;
 }
 
-
-/**
- 获取用户信息
- 
- @return str
- */
-+(NSString *)getUserInfo{
-    
-        
-        //    &userId=cwh&userNum=27074&unitId=44000000&groupId=9&isAppOrWechat=1
-        //    &userId=cwh&userNum=27074&unitId=44000000&groupId=9&isAppOrWechat=1
-        
-        NSString *userJson = BBUserDefault.userModelJSON;
-        
-        NSDictionary *userDict = [EdgeJsonHelper dictionaryWithJsonString:userJson];
-        
-        NSString *userId =  [userDict valueForKey:@"userId"];
-        NSString *userNum =  [userDict valueForKey:@"userNum"];
-        NSString *unitId =  [userDict valueForKey:@"unitId"];
-        NSString *groupId =  [userDict valueForKey:@"groupId"];
-        
-        NSString *userInfoStr = [NSString stringWithFormat:@"&userId=%@&userNum=%@&unitId=%@&groupId=%@&isAppOrWechat=1",userId,userNum,unitId,groupId];
-        
-        return userInfoStr;
-}
-
 /**
  登录用户角色
  用户角色分类
@@ -129,7 +103,7 @@ static UserModel *instance = nil;
  用户类型
  */
 -(UserType)getUserType{
-    
+  
     if ([_vf_user_type isEqualToString:@"GHGLBM"]) {
         return GHGLBM;//交通局用户
     }else if ([_vf_user_type isEqualToString:@"GHXTSYQY"]) {

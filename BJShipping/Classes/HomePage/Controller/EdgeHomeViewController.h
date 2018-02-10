@@ -41,5 +41,10 @@
  @param webURL url
  */
 -(void)showGTWebViewController:(NSString *)webURL;
-    
+
+/**
+ 刷新funcView【下半部分按钮】
+ */
+-(void)reloadFuncView;
+
 @end

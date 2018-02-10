@@ -94,6 +94,7 @@ static EdgeLoginViewController *instance = nil;
             BOOL success = dict[@"success"];
             
             if (success) {
+                
                 //  储存用用户密码
                 [self saveToSandBox];
                 //保存用户信息
@@ -102,6 +103,9 @@ static EdgeLoginViewController *instance = nil;
                 EdgeLog(@"Login_sucess%@----chat id = %@-userid = %ld type = %@" , Model.vf_user_code,Model.vf_user_password,(long)Model.ID,Model.vf_user_type);
                 
                 [self showHint:@"账户登录成功"];
+                
+                //  刷新首页
+                [[EdgeHomeViewController getInstance]reloadFuncView];
                 
                 [AsyncHelper after:1.0 onMainUI:^(id obj) {
                     

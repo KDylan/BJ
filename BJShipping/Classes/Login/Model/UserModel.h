@@ -73,13 +73,6 @@ typedef NS_ENUM(NSInteger, UserType) {
  */
 -(void)saveUserModel;
 
-/**
- 获取用户信息
- 
- @return str
- */
-+(NSString *)getUserInfo;
-
 
 /**
  用户类型
