@@ -17,13 +17,5 @@
 
 
 + (EdgeLoginViewController *)shareInstance;
-/**
- 登录功能
-
- @param userName user
- @param passWorad password
- */
-//-(void)loginActionWithUserName:(NSString *)userName Password:(NSString *)passWorad;
-
 
 @end

@@ -54,6 +54,7 @@
     [self uploadLocatonPlace];
     
 #endif
+    
 }
 
 

@@ -114,9 +114,13 @@
             [self showHint:@"查询出现未知错误"];
             
         }
+        
         [self.tableView reloadData];
+        
         [self hideHud];
+        
     } failure:^(__kindof YTKBaseRequest * _Nonnull request) {
+        
         [self hideHud];
         
         [self.tableView reloadData];

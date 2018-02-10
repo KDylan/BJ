@@ -89,60 +89,12 @@ static MapViewController *instance = nil;
     [self.mapTypeBut.layer setMasksToBounds:YES];
     
     
-    //获取网络桥梁数据
-    [self loadWebShipData];
-    //获取本地桥梁数据
-    [self loadLocalShipData];
+//    //获取网络桥梁数据
+//    [self loadWebShipData];
+//    //获取本地桥梁数据
+//    [self loadLocalShipData];
     
 }
-
-/**
- 远程获取船只数据
- */
--(void)loadWebShipData{
-    
-    __weak typeof(self) weakSelf = self;
-  
-    //获取船只信息
-    NgBridgeInformationApi *api = [[NgBridgeInformationApi alloc] init];
-    
-    [api startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest * _Nonnull request) {
-        
-        NSString *json = request.responseString;
-        if (json && ![json isEqualToString:@"[]"]) {
-            
-            //保存数据
-
-            [AsyncHelper inBackgroundVoid:^{
-                NgBridgeInformationConver *conver = [[NgBridgeInformationConver alloc] initWithString:[NSString stringWithFormat:@"{\"ngBridgeInformations\":%@}" , json] error:nil];
-                
-                if (conver.ngBridgeInformations) {
-                    
-                    [NgBridgeInformationDao saveArray:conver.ngBridgeInformations];
-                    
-                    [weakSelf.ngBridgeInformationArray addObjectsFromArray:conver.ngBridgeInformations];
-                }
-            }];
-        }
-        
-    } failure:^(__kindof YTKBaseRequest * _Nonnull request) {
-        
-    }];
-}
-
-
-/**
- 获取本地桥梁数据
- */
--(void)loadLocalShipData{
-    
-    NSArray *temp = [NgBridgeInformationDao getNgBridgeInformationArray];
-    if (temp) {
-        [self.ngBridgeInformationArray addObjectsFromArray:temp];
-    }
-    
-}
-
 
 
 -(void)viewInit{
@@ -241,15 +193,118 @@ static MapViewController *instance = nil;
 - (void)didUpdateBMKUserLocation:(BMKUserLocation *)userLocation
 {
     //    NSLog(@"didUpdateUserLocation lat %f,long %f",userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude);
+   
     [_mapView updateLocationData:userLocation];
     
+    //  添加桥梁标记
+//    [self setPoint:userLocation];
     
-    [self setPoint:userLocation];
+}
+
+
+// Override
+- (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
+{
+    if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
+        BMKPinAnnotationView *newAnnotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"myAnnotation"];
+        newAnnotationView.pinColor = BMKPinAnnotationColorPurple;
+        newAnnotationView.animatesDrop = NO;// 设置该标注点动画显示
+        [newAnnotationView setImage:[UIImage imageNamed:@"round_red"]];
+        return newAnnotationView;
+    }
+    return nil;
+}
+
+
+- (BMKOverlayView *)mapView:(BMKMapView *)mapView viewForOverlay:(id<BMKOverlay>)overlay{
+    if ([overlay isKindOfClass:[BMKGroundOverlay class]]){
+        BMKGroundOverlayView* groundView = [[BMKGroundOverlayView alloc] initWithOverlay:overlay];
+        return groundView;
+    }
+    return nil;
+}
+
+
+/**
+ 设置桥梁信息
+ */
+-(void)setNgBridgeInformationView{
+    
+    if (self.ngBridgeInformation) {
+        self.name.text = self.ngBridgeInformation.NgBridgeName;
+        self.info.text = self.ngBridgeInformation.getNgBridgeInfo;
+        if (self.ngBridgeInformationView.hidden) {
+            self.ngBridgeInformationView.hidden = NO;
+        }
+    }else{
+        if (!self.ngBridgeInformationView.hidden) {
+            self.ngBridgeInformationView.hidden = YES;
+        }
+    }
+}
+
+
+/**
+ 定位模式
+
+ @param sender sender
+ */
+- (IBAction)mapTypeAction:(id)sender {
+    
+    switch (_mapView.userTrackingMode) {
+        case BMKUserTrackingModeFollowWithHeading://罗盘态
+            [self.mapTypeBut setTitle:@"跟随" forState:UIControlStateNormal];
+            //却换为跟随状态
+            [self startFollowing:sender];
+            break;
+        case BMKUserTrackingModeHeading://跟随态
+            [self.mapTypeBut setTitle:@"罗盘" forState:UIControlStateNormal];
+            //却换为罗盘状态
+            [self startFollowHeading:sender];
+            break;
+        case BMKUserTrackingModeFollow://跟随态
+            [self.mapTypeBut setTitle:@"罗盘" forState:UIControlStateNormal];
+            //却换为罗盘状态
+            [self startFollowHeading:sender];
+            break;
+        default:
+            break;
+    }
+    
+}
+
+
+//罗盘态
+-(IBAction)startFollowHeading:(id)sender
+{
+    EdgeLog(@"进入罗盘态");
+    _mapView.showsUserLocation = NO;
+    _mapView.userTrackingMode = BMKUserTrackingModeFollowWithHeading;
+    _mapView.showsUserLocation = YES;
+}
+
+//跟随态
+-(IBAction)startFollowing:(id)sender
+{
+    EdgeLog(@"进入跟随态");
+    _mapView.showsUserLocation = NO;
+    _mapView.userTrackingMode = BMKUserTrackingModeFollow;
+    _mapView.showsUserLocation = YES;
+}
+
+
+-(void)setShipInfo:(id)sender{
+    
+    FuzzyShip *ship = [FuzzyShip getShipInfo];
+    if (ship) {
+        self.shipName.text = ship.name;
+    }else{
+        self.shipName.text = nil;
+    }
 }
 
 /**
  *在地图View停止定位后，会调用此函数
- *@param mapView 地图View
  */
 - (void)didStopLocatingUser
 {
@@ -258,12 +313,59 @@ static MapViewController *instance = nil;
 
 /**
  *定位失败后，会调用此函数
- *@param mapView 地图View
  *@param error 错误号，参考CLError.h中定义的错误号
  */
 - (void)didFailToLocateUserWithError:(NSError *)error
 {
     NSLog(@"location error");
+}
+
+
+
+/**
+ 远程获取船只数据
+ */
+-(void)loadWebShipData{
+    
+    __weak typeof(self) weakSelf = self;
+    
+    //获取船只信息
+    NgBridgeInformationApi *api = [[NgBridgeInformationApi alloc] init];
+    
+    [api startWithCompletionBlockWithSuccess:^(__kindof YTKBaseRequest * _Nonnull request) {
+        
+        NSString *json = request.responseString;
+        if (json && ![json isEqualToString:@"[]"]) {
+            
+            //保存数据
+            
+            [AsyncHelper inBackgroundVoid:^{
+                NgBridgeInformationConver *conver = [[NgBridgeInformationConver alloc] initWithString:[NSString stringWithFormat:@"{\"ngBridgeInformations\":%@}" , json] error:nil];
+                
+                if (conver.ngBridgeInformations) {
+                    
+                    [NgBridgeInformationDao saveArray:conver.ngBridgeInformations];
+                    
+                    [weakSelf.ngBridgeInformationArray addObjectsFromArray:conver.ngBridgeInformations];
+                }
+            }];
+        }
+        
+    } failure:^(__kindof YTKBaseRequest * _Nonnull request) {
+        
+    }];
+}
+
+/**
+ 获取本地桥梁数据
+ */
+-(void)loadLocalShipData{
+    
+    NSArray *temp = [NgBridgeInformationDao getNgBridgeInformationArray];
+    if (temp) {
+        [self.ngBridgeInformationArray addObjectsFromArray:temp];
+    }
+    
 }
 
 
@@ -275,7 +377,7 @@ static MapViewController *instance = nil;
     if (self.ngBridgeInformationArray && userLocation.location) {
         
         if (userLocation.location) {
-           
+            
             __weak typeof(self) weakself = self;
             
             [AsyncHelper inBackground:^{
@@ -355,108 +457,6 @@ static MapViewController *instance = nil;
             }];
             
         }
-    }
-}
-
-
-// Override
-- (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
-{
-    if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
-        BMKPinAnnotationView *newAnnotationView = [[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"myAnnotation"];
-        newAnnotationView.pinColor = BMKPinAnnotationColorPurple;
-        newAnnotationView.animatesDrop = NO;// 设置该标注点动画显示
-        [newAnnotationView setImage:[UIImage imageNamed:@"round_red"]];
-        return newAnnotationView;
-    }
-    return nil;
-}
-
-
-- (BMKOverlayView *)mapView:(BMKMapView *)mapView viewForOverlay:(id<BMKOverlay>)overlay{
-    if ([overlay isKindOfClass:[BMKGroundOverlay class]]){
-        BMKGroundOverlayView* groundView = [[BMKGroundOverlayView alloc] initWithOverlay:overlay];
-        return groundView;
-    }
-    return nil;
-}
-
-
-/**
- 设置桥梁信息
- */
--(void)setNgBridgeInformationView{
-    
-    if (self.ngBridgeInformation) {
-        self.name.text = self.ngBridgeInformation.NgBridgeName;
-        self.info.text = self.ngBridgeInformation.getNgBridgeInfo;
-        if (self.ngBridgeInformationView.hidden) {
-            self.ngBridgeInformationView.hidden = NO;
-        }
-    }else{
-        if (!self.ngBridgeInformationView.hidden) {
-            self.ngBridgeInformationView.hidden = YES;
-        }
-    }
-}
-
-
-/**
- 定位模式
-
- @param sender <#sender description#>
- */
-- (IBAction)mapTypeAction:(id)sender {
-    
-    switch (_mapView.userTrackingMode) {
-        case BMKUserTrackingModeFollowWithHeading://罗盘态
-            [self.mapTypeBut setTitle:@"跟随" forState:UIControlStateNormal];
-            //却换为跟随状态
-            [self startFollowing:sender];
-            break;
-        case BMKUserTrackingModeHeading://跟随态
-            [self.mapTypeBut setTitle:@"罗盘" forState:UIControlStateNormal];
-            //却换为罗盘状态
-            [self startFollowHeading:sender];
-            break;
-        case BMKUserTrackingModeFollow://跟随态
-            [self.mapTypeBut setTitle:@"罗盘" forState:UIControlStateNormal];
-            //却换为罗盘状态
-            [self startFollowHeading:sender];
-            break;
-        default:
-            break;
-    }
-    
-}
-
-
-//罗盘态
--(IBAction)startFollowHeading:(id)sender
-{
-    NSLog(@"进入罗盘态");
-    _mapView.showsUserLocation = NO;
-    _mapView.userTrackingMode = BMKUserTrackingModeFollowWithHeading;
-    _mapView.showsUserLocation = YES;
-}
-
-//跟随态
--(IBAction)startFollowing:(id)sender
-{
-    NSLog(@"进入跟随态");
-    _mapView.showsUserLocation = NO;
-    _mapView.userTrackingMode = BMKUserTrackingModeFollow;
-    _mapView.showsUserLocation = YES;
-}
-
-
--(void)setShipInfo:(id)sender{
-    
-    FuzzyShip *ship = [FuzzyShip getShipInfo];
-    if (ship) {
-        self.shipName.text = ship.name;
-    }else{
-        self.shipName.text = nil;
     }
 }
 

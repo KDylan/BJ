@@ -14,7 +14,6 @@
 
 #import "ChatDemoHelper.h"
 #import <GTSDK/GeTuiSdk.h>
-//#import "WebViewJavascriptBridge.h"
 
 @interface EdgeLoginViewController ()<UITextFieldDelegate>{
     
@@ -57,7 +56,6 @@ static EdgeLoginViewController *instance = nil;
     
     
 }
-
 
 #pragma mark----------------  点击按钮方法  ----------------------
 /**
@@ -139,6 +137,48 @@ static EdgeLoginViewController *instance = nil;
     }];
 }
 
+
+/**
+ 忘记密码
+ 
+ @param sender sender
+ */
+- (IBAction)forgetPassword:(id)sender {
+    
+    EdgeLog(@"点击忘记密码");
+}
+
+/**
+ 创建账户
+ 
+ @param sender sender
+ */
+- (IBAction)creatAccount:(id)sender {
+    EdgeLog(@"点击创建账户");
+}
+
+
+- (IBAction)closeAction:(id)sender {
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark----------------  自定义函数  ----------------------
+
+
+
+/**
+ 设置一些布局
+ */
+-(void)viewInit{
+    //  添加监听
+    [self.userName addTarget:self action:@selector(textChange) forControlEvents:UIControlEventEditingChanged];
+    [self.userPassward addTarget:self action:@selector(textChange) forControlEvents:UIControlEventEditingChanged];
+    
+    self.userName.delegate = self;
+    self.userPassward.delegate = self;
+}
+
 /**
  数据储存到沙盒中
  */
@@ -156,29 +196,7 @@ static EdgeLoginViewController *instance = nil;
 }
 
 
-/**
- 设置一些布局
- */
--(void)viewInit{
-    //  添加监听
-    [self.userName addTarget:self action:@selector(textChange) forControlEvents:UIControlEventEditingChanged];
-    [self.userPassward addTarget:self action:@selector(textChange) forControlEvents:UIControlEventEditingChanged];
-    
-    self.userName.delegate = self;
-    self.userPassward.delegate = self;
-}
-- (IBAction)closeAction:(id)sender {
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
--(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-    
-    [self hideHud];
-}
-
-
-#pragma mark---------------生命周期----------------------
+#pragma mark---------------  生命周期  ----------------------
 
 -(void)viewWillAppear:(BOOL)animated{
     
@@ -207,6 +225,11 @@ static EdgeLoginViewController *instance = nil;
         
         EdgeLog(@"第一次登录");
     }
+}
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    
+    [self hideHud];
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
